@@ -1,6 +1,7 @@
 package com.sparta.hanghaememo.controller;
 
 import com.sparta.hanghaememo.dto.BoardDTO;
+import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +32,12 @@ public class BoardController {
     }
 
     @PutMapping("/api/boards/{id}")
-    public Board updateMemo(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
+    public ResponseDTO<Board> updateMemo(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
         return boardService.update(id, boardDTO);
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public String delete(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
+    public ResponseDTO<Board> delete(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
         return boardService.delete(id, boardDTO.getPassword());
     }
 
