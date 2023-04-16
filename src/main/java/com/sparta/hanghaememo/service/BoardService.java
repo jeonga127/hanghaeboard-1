@@ -28,6 +28,14 @@ public class BoardService {
         return ResponseDTO.setSuccess("success",boardList);
     }
 
+    public ResponseDTO<Board> listOne(Long id) {
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
+        boardRepository.findById(id);
+        return ResponseDTO.setSuccess("success",board);
+    }
+
     @Transactional
     public ResponseDTO<Board> update(Long id, BoardDTO boardDTO) {
         Board board = boardRepository.findById(id).orElseThrow(

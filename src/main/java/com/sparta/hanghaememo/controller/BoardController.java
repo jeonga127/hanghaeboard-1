@@ -31,6 +31,11 @@ public class BoardController {
         return boardService.list();
     }
 
+    @GetMapping("/api/boards/{id}")
+    public ResponseDTO<Board> listOne(@PathVariable Long id){
+        return boardService.listOne(id);
+    }
+
     @PutMapping("/api/boards/{id}")
     public ResponseDTO<Board> updateMemo(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
         return boardService.update(id, boardDTO);
