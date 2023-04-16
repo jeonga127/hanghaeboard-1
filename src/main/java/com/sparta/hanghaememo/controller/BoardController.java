@@ -43,7 +43,7 @@ public class BoardController {
 
     @DeleteMapping("/api/boards/{id}")
     public ResponseDTO<Board> delete(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
-        return boardService.delete(id, boardDTO.getPassword());
+        return boardService.delete(id, boardDTO);
     }
 
 }

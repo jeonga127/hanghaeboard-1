@@ -23,8 +23,7 @@ public class BoardService {
     }
 
     public ResponseDTO<List<Board>> list() {
-        List<Board> boardList = new ArrayList<>();
-        boardList = boardRepository.findAllByOrderByModifiedAtDesc();
+        List<Board> boardList = boardRepository.findAllByOrderByModifiedAtDesc();
         return ResponseDTO.setSuccess("success",boardList);
     }
 
@@ -48,15 +47,15 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseDTO<Board> delete(Long id, String password) {
+    public ResponseDTO<Board> delete(Long id, BoardDTO boardDTO) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        Board board1 = boardRepository.findByIdAndPassword(id, password).orElseThrow(
+        Board board1 = boardRepository.findByIdAndPassword(id, boardDTO.getPassword()).orElseThrow(
                 () -> new IllegalArgumentException("비밀번호가 일치하지 않습니다.")
         );
         try {
-            boardRepository.deleteByIdAndPassword(id, password);
+            boardRepository.deleteByIdAndPassword(id, boardDTO.getPassword());
         }catch (Exception e){
             return ResponseDTO.setFailed("Data Base Error!");
         }
