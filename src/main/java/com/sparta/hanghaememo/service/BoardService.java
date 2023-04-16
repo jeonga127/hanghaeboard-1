@@ -32,7 +32,6 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        boardRepository.findById(id);
         return ResponseDTO.setSuccess("success",board);
     }
 
