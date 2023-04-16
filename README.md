@@ -2,15 +2,14 @@
 
 ## API 명세
 
-#### 메인페이지
-
-[게시글 작성하기](https://www.notion.so/368620b47d8044e39ef8d1836b0bc4a7)
-
-[게시글 조회](https://www.notion.so/6c0ae76af68e4caaacebc477840a6b76)
-
-[게시글 수정](https://www.notion.so/52d7b34802004cbfa0c1ed3817339099)
-
-[게시글 삭제](https://www.notion.so/ecd7f53b299c4b63bc9aebad7ea63468)
+|기능|Method|URL|Request|Response|
+|:------|:---|:---|:---|:---|
+|메인페이지|GET|/|-|테스트3|
+|작성|POST|/api/write|{"username":"qw12","password":"1234","title":"title","contents":contents}|{"createdAt": "2023-04-15T20:26:55.0299781","modifiedAt": "2023-04-15T20:26:55.0299781","id": 1,"username":"song","password": "1234","title": "안녕","contents": "반가워"}|
+|조회|GET|/api/boards|-|[{"createdAt": "2023-04-15T20:32:30.750136","modifiedAt": "2023-04-15T20:32:30.750136","id": 2,"username": "qw12","password": "1234","title": "title","contents": "contents"},{"createdAt": "2023-04-15T20:26:55.029978","modifiedAt": "2023-04-15T20:26:55.029978","id": 1,"username": "song","password": "1234","title": "안녕","contents": "반가워"}]|
+|수정|PUT|/api/boards/{id}|{"username":"qw34","password":"1234","title":"title1","contents":contents1}|{"result": true, "message": "success","date": {"createdAt": "2023-04-15T20:32:30.750136","modifiedAt": "2023-04-16T04:42:39.7152063","id": 2,"username": "qw34","password": "1234","title": "title1", "contents": "contents1"}}|
+|삭제|DELETE|/api/boards/{id}|{"password" : "1234"}|{"result": true,"message": "success","date": null}|
 
 ## 유스케이스
-![과제1.drawio.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ff547f23-205d-420c-a7b3-5a8d4f86a02d/%EA%B3%BC%EC%A0%9C1.drawio.png)
+
+![과제1 drawio](https://user-images.githubusercontent.com/101760007/232275151-b2bdbf79-4491-478a-900f-52360527ec58.png)
