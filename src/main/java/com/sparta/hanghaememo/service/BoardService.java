@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,14 +16,16 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
 
-    public Board write(BoardDTO boardDTO){
+    public ResponseDTO<Board> write(BoardDTO boardDTO){
         Board board = new Board(boardDTO);
         boardRepository.save(board);
-        return board;
+        return ResponseDTO.setSuccess("success",board);
     }
 
-    public List<Board> list() {
-        return boardRepository.findAllByOrderByModifiedAtDesc();
+    public ResponseDTO<List<Board>> list() {
+        List<Board> boardList = new ArrayList<>();
+        boardList = boardRepository.findAllByOrderByModifiedAtDesc();
+        return ResponseDTO.setSuccess("success",boardList);
     }
 
     @Transactional

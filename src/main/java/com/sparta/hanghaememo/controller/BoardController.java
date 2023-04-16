@@ -22,12 +22,12 @@ public class BoardController {
     }
 
     @PostMapping("/api/write")
-    public Board write(@RequestBody BoardDTO board){
+    public ResponseDTO<Board> write(@RequestBody BoardDTO board){
         return boardService.write(board);
     }
 
     @GetMapping("/api/boards")
-    public List<Board> list(){
+    public ResponseDTO<List<Board>> list(){
         return boardService.list();
     }
 
