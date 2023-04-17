@@ -8,7 +8,7 @@ import lombok.Data;
 public class ResponseDTO<D> {
     private boolean result;
     private String message;
-    private D date;
+    private D data;
 
     public static <D> ResponseDTO<D> setSuccess(String message, D data){
         return ResponseDTO.set(true, message, data);
