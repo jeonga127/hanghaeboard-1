@@ -40,7 +40,7 @@ public class Board extends Timestamped{
         this.contents = boardDTO.getContents();
     }
 
-    public void setUser(Users user) {
+    public void addUser(Users user) {
         this.user = user;
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,6 @@ public class BoardService {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
-        // 토큰이 있는 경우에만 관심상품 최저가 업데이트 가능
         if (token != null) {
             // Token 검증
             if (jwtUtil.validateToken(token)) {
@@ -41,9 +41,9 @@ public class BoardService {
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             Users user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    () -> new NoSuchElementException("사용자가 존재하지 않습니다.")
             );
-            board.setUser(user);
+            board.addUser(user);
             boardRepository.save(board);
             return ResponseDTO.setSuccess("write success",board);
 
@@ -71,7 +71,6 @@ public class BoardService {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
-        // 토큰이 있는 경우에만 관심상품 최저가 업데이트 가능
         if (token != null) {
             // Token 검증
             if (jwtUtil.validateToken(token)) {
@@ -102,7 +101,6 @@ public class BoardService {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
-        // 토큰이 있는 경우에만 관심상품 최저가 업데이트 가능
         if (token != null) {
             // Token 검증
             if (jwtUtil.validateToken(token)) {
