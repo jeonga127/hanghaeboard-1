@@ -2,14 +2,16 @@
 
 ## API 명세
 
-|기능|Method|URL|Request|Response|
-|:------|:---|:---|:---|:---|
+|기능|Method|URL|Request Header|Request|Response|Response Header|
+|:------|:---|:---|:---|:---|:---|:---|
 |메인페이지|GET|/|-|index.html|
-|작성|POST|/api/write|{"username":"qw12","password":"1234","title":"title","contents":contents}|{"result": true,"message": "success","date": {"createdAt": "2023-04-15T20:26:55.0299781","modifiedAt": "2023-04-15T20:26:55.0299781","id": 1,"username":"song","password": "1234","title": "안녕","contents": "반가워"}}|
-|전체|GET|/api/boards|-|{"result": true,"message": "success","date":[{"createdAt": "2023-04-15T20:32:30.750136","modifiedAt": "2023-04-15T20:32:30.750136","id": 2,"username": "qw12","password": "1234","title": "title","contents": "contents"},{"createdAt": "2023-04-15T20:26:55.029978","modifiedAt": "2023-04-15T20:26:55.029978","id": 1,"username": "song","password": "1234","title": "안녕","contents": "반가워"}]}|
-|조회|GET|/api/boards/{id}|{"id":2}|{"result": true,"message": "success","date":{"createdAt": "2023-04-15T20:32:30.750136","modifiedAt": "2023-04-15T20:32:30.750136","id": 2,"username": "qw12","password": "1234","title": "title","contents": "contents"}}|
-|수정|PUT|/api/boards/{id}|{"username":"qw34","password":"1234","title":"title1","contents":contents1}|{"result": true, "message": "success","date": {"createdAt": "2023-04-15T20:32:30.750136","modifiedAt": "2023-04-16T04:42:39.7152063","id": 2,"username": "qw34","password": "1234","title": "title1", "contents": "contents1"}}|
-|삭제|DELETE|/api/boards/{id}|{"password" : "1234"}|{"result": true,"message": "success","date": null}|
+|회원가입|POST|/api/user/signup|-|{"username":"godjin12","password":"hyeonjin12"}|{"result": true,"message": "회원가입 성공","status": "OK","data": null}|z|
+|로그인|POST|/api/user/login|-|{"username":"godjin12","password":"hyeonjin12"}|{"result": true,"message": "로그인 성공","status": "OK","data": null}|Authorization:BearereyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnb2RqaW4xMiIsImV4cCI6MTY4MTczMjYwNCwiaWF0IjoxNjgxNzI5MDA0fQ.3_-Pgu2TIWP8tTt9il9sEluF7u6S3uipVN-_HyDzVYo|
+|작성|POST|/api/write|Authorization:BearereyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnb2RqaW4xMiIsImV4cCI6MTY4MTczMjYwNCwiaWF0IjoxNjgxNzI5MDA0fQ.3_-Pgu2TIWP8tTt9il9sEluF7u6S3uipVN-_HyDzVYo|{"title" : "아싸1","contents" : "과제성공1"}|{"result": true,"message": "write success","status": "OK","data": {"createdAt": "2023-04-17T19:57:42.767257","modifiedAt": "2023-04-17T19:57:42.767257","id": 1,"title": "아싸1","contents": "과제성공1","user": {"id": 1,"username": "godjin12","password": "hyeonjin12"}}}|z|
+|목록|GET|/api/boards|-|-|{"result": true,"message": "list success","status": "OK","data": [{"createdAt": "2023-04-17T19:58:58.469346","modifiedAt": "2023-04-17T19:58:58.469346","id": 2,"title": "아싸2","contents": "과제성공2","user": {"id": 1,"username": "godjin12","password": "hyeonjin12"}},{"createdAt": "2023-04-17T19:57:42.767257","modifiedAt": "2023-04-17T19:57:42.767257","id": 1,"title": "아싸1","contents": "과제성공1","user": {"id": 1,"username": "godjin12","password": "hyeonjin12"}}]}|-|
+|조회|GET|/api/boards/{id}|-|-|{"result": true,"message": "listOne success","status": "OK","data": {"createdAt": "2023-04-17T19:57:42.767257","modifiedAt": "2023-04-17T19:57:42.767257","id": 1,"title": "아싸1","contents": "과제성공1","user": {"id": 1,"username": "godjin12","password": "hyeonjin12"}}}|-|
+|수정|PUT|/api/boards/{id}|Authorization:BearereyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnb2RqaW4xMiIsImV4cCI6MTY4MTczMjYwNCwiaWF0IjoxNjgxNzI5MDA0fQ.3_-Pgu2TIWP8tTt9il9sEluF7u6S3uipVN-_HyDzVYo|{"title" : "아싸12","contents" : "과제성공12"}|{"result": true,"message": "update success","status": "OK","data": {"createdAt": "2023-04-17T19:57:42.767257","modifiedAt": "2023-04-17T20:03:46.523136","id": 1,"title": "아싸12","contents": "과제성공12","user": {"id": 1,"username": "godjin12","password": "hyeonjin12"}}}|-|
+|삭제|DELETE|//api/boards/{id}|Authorization:BearereyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnb2RqaW4xMiIsImV4cCI6MTY4MTczMjYwNCwiaWF0IjoxNjgxNzI5MDA0fQ.3_-Pgu2TIWP8tTt9il9sEluF7u6S3uipVN-_HyDzVYo|-|{"result": true,"message": "delete success","status": "OK","data": null}|-|
 
 ## 유스케이스
 
