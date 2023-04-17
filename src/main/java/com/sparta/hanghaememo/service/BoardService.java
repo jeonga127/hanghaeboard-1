@@ -23,6 +23,7 @@ public class BoardService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+    @Transactional
     public ResponseDTO<Board> write(BoardDTO boardDTO , HttpServletRequest request){
         Board board = new Board(boardDTO);
 
@@ -52,11 +53,13 @@ public class BoardService {
         }
     }
 
+    @Transactional(readOnly = true)
     public ResponseDTO<List<Board>> list() {
         List<Board> boardList = boardRepository.findAllByOrderByModifiedAtDesc();
         return ResponseDTO.setSuccess("list success",boardList);
     }
 
+    @Transactional(readOnly = true)
     public ResponseDTO<Board> listOne(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
