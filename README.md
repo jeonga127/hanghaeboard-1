@@ -16,3 +16,7 @@
 ## 유스케이스
 
 ![과제1 drawio](https://user-images.githubusercontent.com/101760007/232275151-b2bdbf79-4491-478a-900f-52360527ec58.png)
+
+## ERD 설계
+
+![블로그_erd](https://user-images.githubusercontent.com/47537803/232467599-e293bdc5-34dd-4334-9ae1-f9822d8c0876.PNG)
