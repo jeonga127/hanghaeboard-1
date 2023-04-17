@@ -1,11 +1,12 @@
 package com.sparta.hanghaememo.service;
 
 import com.sparta.hanghaememo.dto.ResponseDTO;
+import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.UserRepository;
 import com.sparta.hanghaememo.dto.LoginRequestDto;
 import com.sparta.hanghaememo.dto.SignupRequestDto;
-import com.sparta.hanghaememo.entity.User;
-import com.sparta.hanghaememo.repository.UserRepository;
+import com.sparta.hanghaememo.entity.Users;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,30 +19,30 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final JwtUtil jwtUtil;
+
     @Transactional
-    public ResponseDTO<User> signup(SignupRequestDto signupRequestDto) {
+    public ResponseDTO<Users> signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
-        String email = signupRequestDto.getEmail();
 
         // 회원 중복 확인
-        Optional<User> found = userRepository.findByUsername(username);
+        Optional<Users> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
-
-        User user = new User(username, password, email);
+        Users user = new Users(username, password);
         userRepository.save(user);
         return ResponseDTO.setSuccess("회원가입 성공",null);
     }
 
     @Transactional(readOnly = true)
-    public ResponseDTO<User> login(LoginRequestDto loginRequestDto) {
+    public ResponseDTO<Users> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
         // 사용자 확인
-        User user = userRepository.findByUsername(username).orElseThrow(
+        Users user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
 
@@ -50,6 +51,7 @@ public class UserService {
             throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername()));
         return ResponseDTO.setSuccess("로그인 성공", null);
     }
 }

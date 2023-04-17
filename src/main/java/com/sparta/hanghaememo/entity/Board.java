@@ -11,43 +11,36 @@ import lombok.NoArgsConstructor;
 public class Board extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "board_id")
     private Long id;
 
     @Column(nullable = false)
-    private String username;
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
     private String title;
+
     @Column(nullable = false)
     private String contents;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Users user;
 
-
-    public Board(String username, String password, String title, String contents) {
-        this.username = username;
-        this.password = password;
+    public Board(String title, String contents, Users user) {
         this.title = title;
         this.contents = contents;
+        this.user = user;
     }
 
     public Board(BoardDTO boardDTO){
-        this.username = boardDTO.getUsername();
-        this.password = boardDTO.getPassword();
         this.title = boardDTO.getTitle();
         this.contents = boardDTO.getContents();
     }
-
 
     public void update(BoardDTO boardDTO) {
-        this.username = boardDTO.getUsername();
-        this.password = boardDTO.getPassword();
         this.title = boardDTO.getTitle();
         this.contents = boardDTO.getContents();
     }
 
+    public void setUser(Users user) {
+        this.user = user;
+    }
 }

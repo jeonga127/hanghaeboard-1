@@ -4,6 +4,7 @@ import com.sparta.hanghaememo.dto.BoardDTO;
 import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.service.BoardService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,8 +23,8 @@ public class BoardController {
     }
 
     @PostMapping("/api/write")
-    public ResponseDTO<Board> write(@RequestBody BoardDTO board){
-        return boardService.write(board);
+    public ResponseDTO<Board> write(@RequestBody BoardDTO board, HttpServletRequest request){
+        return boardService.write(board, request);
     }
 
     @GetMapping("/api/boards")
@@ -37,13 +38,12 @@ public class BoardController {
     }
 
     @PutMapping("/api/boards/{id}")
-    public ResponseDTO<Board> updateMemo(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
-        return boardService.update(id, boardDTO);
+    public ResponseDTO<Board> updateMemo(@PathVariable Long id, @RequestBody BoardDTO boardDTO, HttpServletRequest request) {
+        return boardService.update(id, boardDTO ,request);
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public ResponseDTO<Board> delete(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
-        return boardService.delete(id, boardDTO);
+    public ResponseDTO<Board> delete(@PathVariable Long id, HttpServletRequest request) {
+        return boardService.delete(id, request);
     }
-
 }

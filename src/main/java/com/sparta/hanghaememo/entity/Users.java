@@ -1,16 +1,21 @@
 package com.sparta.hanghaememo.entity;
 
+import com.sparta.hanghaememo.dto.SignupRequestDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
-public class User {
+public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -19,13 +24,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-
-    public User(String username, String password, String email) {
+    public Users(String username, String password) {
         this.username = username;
         this.password = password;
-        this.email = email;
+    }
+
+    public Users(SignupRequestDto signupRequestDto) {
+        this.username = username;
+        this.password = password;
     }
 }
