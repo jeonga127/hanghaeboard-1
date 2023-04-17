@@ -5,9 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Getter
 @Entity
 @NoArgsConstructor
@@ -25,6 +22,10 @@ public class Board extends Timestamped{
     private String title;
     @Column(nullable = false)
     private String contents;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 
     public Board(String username, String password, String title, String contents) {

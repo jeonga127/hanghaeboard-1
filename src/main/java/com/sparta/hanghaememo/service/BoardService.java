@@ -39,13 +39,7 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        Board board1 = boardRepository.findByIdAndPassword(id, boardDTO.getPassword()).orElseThrow(
-                () -> new IllegalArgumentException("비밀번호가 일치하지 않습니다.")
-        );
-//        if(board.getPassword().equals(boardDTO.getPassword())){
-//            board.update(boardDTO);
-//            return ResponseDTO.setSuccess("success",board);
-//        }else return ResponseDTO.setFailed("fail");
+        
         board.update(boardDTO);
         return ResponseDTO.setSuccess("success", board);
     }
@@ -55,13 +49,7 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        Board board1 = boardRepository.findByIdAndPassword(id, boardDTO.getPassword()).orElseThrow(
-                () -> new IllegalArgumentException("비밀번호가 일치하지 않습니다.")
-        );
-//        if(board.getPassword().equals(boardDTO.getPassword())){
-//            board.update(boardDTO);
-//            return ResponseDTO.setSuccess("success",board);
-//        }else return ResponseDTO.setFailed("fail");
+
         boardRepository.deleteByIdAndPassword(id, boardDTO.getPassword());
         return ResponseDTO.setSuccess("success",null);
     }
