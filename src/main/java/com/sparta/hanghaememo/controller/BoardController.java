@@ -22,7 +22,7 @@ public class BoardController {
         return new ModelAndView("index.html");
     }
 
-    @PostMapping("/api/write")
+    @PostMapping("/api/boards")
     public ResponseDTO<Board> write(@RequestBody BoardDTO board, HttpServletRequest request){
         return boardService.write(board, request);
     }
