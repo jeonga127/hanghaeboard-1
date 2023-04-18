@@ -1,6 +1,7 @@
 package com.sparta.hanghaememo.controller;
 
-import com.sparta.hanghaememo.dto.BoardDTO;
+import com.sparta.hanghaememo.dto.BoardRequestDTO;
+import com.sparta.hanghaememo.dto.BoardResponseDto;
 import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.service.BoardService;
@@ -23,27 +24,27 @@ public class BoardController {
     }
 
     @PostMapping("/api/boards")
-    public ResponseDTO<Board> write(@RequestBody BoardDTO board, HttpServletRequest request){
+    public BoardResponseDto write(@RequestBody BoardRequestDTO board, HttpServletRequest request){
         return boardService.write(board, request);
     }
 
     @GetMapping("/api/boards")
-    public ResponseDTO<List<Board>> list(){
+    public ResponseDTO list(){
         return boardService.list();
     }
 
     @GetMapping("/api/boards/{id}")
-    public ResponseDTO<Board> listOne(@PathVariable Long id){
+    public BoardResponseDto listOne(@PathVariable Long id){
         return boardService.listOne(id);
     }
 
     @PutMapping("/api/boards/{id}")
-    public ResponseDTO<Board> updateMemo(@PathVariable Long id, @RequestBody BoardDTO boardDTO, HttpServletRequest request) {
+    public BoardResponseDto updateMemo(@PathVariable Long id, @RequestBody BoardRequestDTO boardDTO, HttpServletRequest request) {
         return boardService.update(id, boardDTO ,request);
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public ResponseDTO<Board> delete(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseDTO delete(@PathVariable Long id, HttpServletRequest request) {
         return boardService.delete(id, request);
     }
 }

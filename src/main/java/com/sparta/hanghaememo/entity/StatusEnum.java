@@ -1,4 +1,4 @@
-package com.sparta.hanghaememo.dto;
+package com.sparta.hanghaememo.entity;
 
 public enum StatusEnum {
     OK(200, "OK"),
