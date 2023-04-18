@@ -3,9 +3,6 @@ package com.sparta.hanghaememo.dto;
 import com.sparta.hanghaememo.entity.Board;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import java.time.LocalDateTime;
 
 @Getter

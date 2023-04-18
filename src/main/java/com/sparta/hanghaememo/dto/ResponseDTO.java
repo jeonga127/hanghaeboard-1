@@ -1,7 +1,6 @@
 package com.sparta.hanghaememo.dto;
 
 import com.sparta.hanghaememo.entity.StatusEnum;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

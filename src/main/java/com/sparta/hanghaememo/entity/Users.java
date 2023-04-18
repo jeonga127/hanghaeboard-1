@@ -2,7 +2,6 @@ package com.sparta.hanghaememo.entity;
 
 import com.sparta.hanghaememo.dto.SignupRequestDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

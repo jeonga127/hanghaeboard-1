@@ -1,13 +1,11 @@
 package com.sparta.hanghaememo.controller;
 
 import com.sparta.hanghaememo.dto.LoginRequestDto;
-import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.dto.SignupRequestDto;
 import com.sparta.hanghaememo.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
