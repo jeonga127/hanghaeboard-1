@@ -6,12 +6,16 @@ import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.entity.StatusEnum;
 import com.sparta.hanghaememo.entity.Users;
+import com.sparta.hanghaememo.jwt.JwtAuthenticationFilter;
 import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.repository.UserRepository;
+import com.sparta.hanghaememo.security.TokenProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,114 +29,75 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
 
     @Transactional
-    public BoardResponseDto write(BoardRequestDTO boardRequestDTO , HttpServletRequest request){
+    public ResponseEntity write(BoardRequestDTO boardRequestDTO , HttpServletRequest request){
         Board board = new Board(boardRequestDTO);
 
-        // Request에서 Token 가져오기
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        // 사용자 정보 불러오기
+        String username= usernameToken(request);
+        // 회원 존재여부 확인
+        Users users = checkUsers(username);
 
-        if (token != null) {
-            // Token 검증
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
-
-            // 회원 존재여부 확인
-            Users users = checkUsers(claims);
-
-            board.addUser(users);
-            boardRepository.save(board);
-            return new BoardResponseDto(board);
-
-        } else {
-            throw new NoSuchElementException("로그인 하세요.");
-        }
+        board.addUser(users);
+        boardRepository.save(board);
+        return new ResponseEntity(boardRequestDTO, HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
     // Board 객체를 BoardResponseDTO 타입으로 변경해 리스트 반환
-    public ResponseDTO list() {
+    public ResponseEntity list() {
         List<BoardResponseDto> boardList = boardRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(BoardResponseDto::new)
                 .collect(Collectors.toList());
-        return new ResponseDTO("list success", StatusEnum.OK, boardList);
+        ResponseDTO responseDTO =new ResponseDTO("list success", boardList);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
-    public BoardResponseDto listOne(Long id) {
+    public ResponseEntity listOne(Long id) {
         // 게시글 존재여부 확인
         Board board = checkBoard(id);
-        return new BoardResponseDto(board);
+        BoardResponseDto boardResponseDto = new BoardResponseDto(board);
+        return new ResponseEntity(boardResponseDto, HttpStatus.OK);
     }
 
     @Transactional
-    public BoardResponseDto update(Long id, BoardRequestDTO boardRequestDTO, HttpServletRequest request) {
+    public ResponseEntity update(Long id, BoardRequestDTO boardRequestDTO, HttpServletRequest request) {
 
-        // Request에서 Token 가져오기
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        // 사용자 정보 불러오기
+        String username= usernameToken(request);
+        // 회원 존재여부 확인
+        Users users = checkUsers(username);
+        // 게시글 존재여부 확인
+        Board board = checkBoard(id);
+        // 작성자 게시글 체크
+        isBoardUsers(users, board);
 
-        if (token != null) {
-            // Token 검증
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
-
-            // 회원 존재여부 확인
-            Users users = checkUsers(claims);
-            // 게시글 존재여부 확인
-            Board board = checkBoard(id);
-            // 작성자 게시글 체크
-            isBoardUsers(users, board);
-
-            board.update(boardRequestDTO);
-            return new BoardResponseDto(board);
-
-        } else {
-            throw new NoSuchElementException("로그인 하세요.");
-        }
+        board.update(boardRequestDTO);
+        return new ResponseEntity(boardRequestDTO, HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseDTO delete(Long id, HttpServletRequest request) {
-        // Request에서 Token 가져오기
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public ResponseEntity delete(Long id, HttpServletRequest request) {
 
-        if (token != null) {
-            // Token 검증
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
+        // 사용자 정보 불러오기
+        String username= usernameToken(request);
+        // 회원 존재여부 확인
+        Users users = checkUsers(username);
+        // 게시글 존재여부 확인
+        Board board = checkBoard(id);
+        // 작성자 게시글 체크
+        isBoardUsers(users, board);
 
-            // 회원 존재여부 확인
-            Users users = checkUsers(claims);
-            // 게시글 존재여부 확인
-            Board board = checkBoard(id);
-            // 작성자 게시글 체크
-            isBoardUsers(users, board);
-
-            boardRepository.deleteById(id);
-            return new ResponseDTO("delete success",StatusEnum.OK,null);
-        } else {
-            throw new NoSuchElementException("로그인 하세요.");
-        }
+        boardRepository.deleteById(id);
+        ResponseDTO responseDTO = new ResponseDTO("delete success",null);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
-    private Users checkUsers(Claims claims){
-        Users users = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+    private Users checkUsers(String username){
+        Users users = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
         );
         return users;
@@ -149,5 +114,11 @@ public class BoardService {
         if (board.getUser() != users) {
             throw new IllegalArgumentException("다른 사람이 작성한 게시글은 삭제할 수 없습니다.");
         }
+    }
+
+    // 토큰 사용자 정보 가져오기
+    private String usernameToken(HttpServletRequest request){
+        String token = tokenProvider.resolveToken(request);
+        return tokenProvider.validate(token);
     }
 }

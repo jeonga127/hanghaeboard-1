@@ -8,8 +8,10 @@ import com.sparta.hanghaememo.repository.UserRepository;
 import com.sparta.hanghaememo.dto.LoginRequestDto;
 import com.sparta.hanghaememo.dto.SignupRequestDto;
 import com.sparta.hanghaememo.entity.Users;
+import com.sparta.hanghaememo.security.TokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
-    private final JwtUtil jwtUtil;
 
     @Transactional
     public ResponseEntity signup(SignupRequestDto signupRequestDto) {
@@ -33,7 +34,7 @@ public class UserService {
         // 회원 중복 확인
         Optional<Users> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+            return new ResponseEntity("중복된 username 입니다 ", HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST);
         }
 
         // 사용자 role 확인
@@ -47,7 +48,7 @@ public class UserService {
 
         Users user = new Users(username, password, role);
         userRepository.save(user);
-        ResponseDTO responseDTO = new ResponseDTO("회원가입 성공", StatusEnum.OK, null);
+        ResponseDTO responseDTO = new ResponseDTO("회원가입 성공",null);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -56,18 +57,27 @@ public class UserService {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
-        // 사용자 확인
-        Users user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
-        );
+        // 사용자 유무 확인
+        Users user = userCheck(username);
 
         // 비밀번호 확인
-        if(!user.getPassword().equals(password)){
-            throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+        if(!passwordCheck(password, user))
+            return new ResponseEntity("회원을 찾을 수 없습니다.", HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST);
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername()));
-        ResponseDTO responseDTO = new ResponseDTO("로그인 성공", StatusEnum.OK, null);
+        response.addHeader(tokenProvider.AUTHORIZATION_HEADER, tokenProvider.create(user.getUsername(),user.getRole()));
+        ResponseDTO responseDTO = new ResponseDTO("로그인 성공",  user);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
+    }
+
+    private Users userCheck(String username){
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
+        );
+    }
+
+    private boolean passwordCheck(String password, Users users){
+        if(users.getPassword().equals(password))
+            return true;
+        return false;
     }
 }
