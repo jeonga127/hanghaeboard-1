@@ -1,17 +1,11 @@
 package com.sparta.hanghaememo.controller;
 
 import com.sparta.hanghaememo.dto.BoardRequestDTO;
-import com.sparta.hanghaememo.dto.BoardResponseDto;
-import com.sparta.hanghaememo.dto.ResponseDTO;
-import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

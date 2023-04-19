@@ -1,9 +1,6 @@
 package com.sparta.hanghaememo.controller;
 
-import com.sparta.hanghaememo.dto.BoardResponseDto;
 import com.sparta.hanghaememo.dto.CommentRequestDto;
-import com.sparta.hanghaememo.dto.CommentResponseDTO;
-import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

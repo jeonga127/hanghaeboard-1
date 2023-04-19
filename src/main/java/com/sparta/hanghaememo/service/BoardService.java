@@ -4,14 +4,12 @@ import com.sparta.hanghaememo.dto.BoardRequestDTO;
 import com.sparta.hanghaememo.dto.BoardResponseDto;
 import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.Board;
-import com.sparta.hanghaememo.entity.StatusEnum;
+import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.entity.Users;
-import com.sparta.hanghaememo.jwt.JwtAuthenticationFilter;
 import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.repository.UserRepository;
 import com.sparta.hanghaememo.security.TokenProvider;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +39,8 @@ public class BoardService {
 
         board.addUser(users);
         boardRepository.save(board);
-        return new ResponseEntity(boardRequestDTO, HttpStatus.OK);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 작성 성공", boardRequestDTO);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
@@ -51,7 +49,7 @@ public class BoardService {
         List<BoardResponseDto> boardList = boardRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(BoardResponseDto::new)
                 .collect(Collectors.toList());
-        ResponseDTO responseDTO =new ResponseDTO("list success", boardList);
+        ResponseDTO responseDTO =ResponseDTO.setSuccess("게시글 목록 조회 성공", boardList);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -60,7 +58,8 @@ public class BoardService {
         // 게시글 존재여부 확인
         Board board = checkBoard(id);
         BoardResponseDto boardResponseDto = new BoardResponseDto(board);
-        return new ResponseEntity(boardResponseDto, HttpStatus.OK);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 조회 성공",boardResponseDto);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
     @Transactional
@@ -76,7 +75,8 @@ public class BoardService {
         isBoardUsers(users, board);
 
         board.update(boardRequestDTO);
-        return new ResponseEntity(boardRequestDTO, HttpStatus.OK);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 수정 성공",boardRequestDTO);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
     @Transactional
@@ -92,7 +92,7 @@ public class BoardService {
         isBoardUsers(users, board);
 
         boardRepository.deleteById(id);
-        ResponseDTO responseDTO = new ResponseDTO("delete success",null);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 삭제 성공",null);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -111,8 +111,8 @@ public class BoardService {
     }
 
     private void isBoardUsers(Users users, Board board) {
-        if (board.getUser() != users) {
-            throw new IllegalArgumentException("다른 사람이 작성한 게시글은 삭제할 수 없습니다.");
+        if (!board.getUser().equals(users) && !users.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
         }
     }
 
