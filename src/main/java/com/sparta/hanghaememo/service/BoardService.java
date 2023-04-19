@@ -6,7 +6,6 @@ import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.entity.Users;
-import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.repository.UserRepository;
 import com.sparta.hanghaememo.security.TokenProvider;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
 
