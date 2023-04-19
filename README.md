@@ -14,7 +14,7 @@
 |삭제|DELETE|/api/boards/{id}|Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnb2RqaW4xMiIsImV4cCI6MTY4MTczMjYwNCwiaWF0IjoxNjgxNzI5MDA0fQ.3_-Pgu2TIWP8tTt9il9sEluF7u6S3uipVN-_HyDzVYo|-|{"message": "delete success","status": "OK","data": null}|-|
 
 ## 유스케이스
-![항해과제2 (1)](https://user-images.githubusercontent.com/101760007/232492400-70190ca2-d950-4ad4-955b-a546c9399f9b.png)
+![사용자인증](https://user-images.githubusercontent.com/101760007/232858291-4563bf6b-1b35-4009-a879-ba39690b9203.png)
 
 ## ERD 설계
 
