@@ -2,6 +2,7 @@ package com.sparta.hanghaememo.service;
 
 import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.StatusEnum;
+import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.UserRepository;
 import com.sparta.hanghaememo.dto.LoginRequestDto;
@@ -21,7 +22,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
     private final JwtUtil jwtUtil;
 
     @Transactional
@@ -34,7 +35,17 @@ public class UserService {
         if (found.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
-        Users user = new Users(username, password);
+
+        // 사용자 role 확인
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (signupRequestDto.isAdmin()) {
+            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+            }
+            role = UserRoleEnum.ADMIN;
+        }
+
+        Users user = new Users(username, password, role);
         userRepository.save(user);
         ResponseDTO responseDTO = new ResponseDTO("회원가입 성공", StatusEnum.OK, null);
         return new ResponseEntity(responseDTO, HttpStatus.OK);

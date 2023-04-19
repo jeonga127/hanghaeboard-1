@@ -1,9 +1,12 @@
 package com.sparta.hanghaememo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.hanghaememo.dto.BoardRequestDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Entity
@@ -15,34 +18,32 @@ public class Board extends Timestamped{
     private Long id;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String contents;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    public Board(String username,String title, String contents, Users user) {
-        this.username = username;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "board",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OrderBy("createdAt desc")
+    private List<Comment> commentList;
+
+    public Board(String title, String contents, Users user) {
         this.title = title;
         this.contents = contents;
         this.user = user;
     }
 
     public Board(BoardRequestDTO boardDTO){
-        this.username = boardDTO.getUsername();
         this.title = boardDTO.getTitle();
         this.contents = boardDTO.getContents();
     }
 
     public void update(BoardRequestDTO boardDTO) {
-        this.username = boardDTO.getUsername();
         this.title = boardDTO.getTitle();
         this.contents = boardDTO.getContents();
     }
@@ -50,4 +51,6 @@ public class Board extends Timestamped{
     public void addUser(Users user) {
         this.user = user;
     }
+
+    public void addComment(List<Comment> commentList){ this.commentList = commentList; }
 }

@@ -58,7 +58,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     // Board 객체를 BoardResponseDTO 타입으로 변경해 리스트 반환
     public ResponseDTO list() {
-        List<BoardResponseDto> boardList = boardRepository.findAllByOrderByModifiedAtDesc().stream()
+        List<BoardResponseDto> boardList = boardRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(BoardResponseDto::new)
                 .collect(Collectors.toList());
         return new ResponseDTO("list success", StatusEnum.OK, boardList);

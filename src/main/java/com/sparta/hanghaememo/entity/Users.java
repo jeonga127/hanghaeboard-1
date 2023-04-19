@@ -1,5 +1,6 @@
 package com.sparta.hanghaememo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.hanghaememo.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,11 +22,17 @@ public class Users {
     private String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
-    public Users(String username, String password) {
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
+
+    public Users(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     public Users(SignupRequestDto signupRequestDto) {
