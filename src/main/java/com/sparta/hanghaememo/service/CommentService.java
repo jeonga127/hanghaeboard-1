@@ -55,7 +55,7 @@ public class CommentService {
             boardRepository.save(board);
             return new CommentResponseDTO(comment);
         }
-        throw new IllegalArgumentException("GG");
+        throw new IllegalArgumentException("토큰이 유효하지 않습니다");
     }
 
     @Transactional
@@ -77,16 +77,16 @@ public class CommentService {
 
             if(users.getUsername().equals(comment.getUser().getUsername())){
                 comment.update(requestDto);
-                c
-            }
+            } else throw new IllegalArgumentException("수정 권한이 없습니다");
             return new CommentResponseDTO(comment);
         }
-        throw new IllegalArgumentException("GG");
+        throw new IllegalArgumentException("토큰이 유효하지 않습니다");
     }
 
     @Transactional
     public CommentResponseDTO deleteComment(Long id, HttpServletRequest request) {
-
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
 
         return new CommentResponseDTO(null);
     }
