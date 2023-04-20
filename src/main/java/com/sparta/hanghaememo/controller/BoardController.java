@@ -1,6 +1,6 @@
 package com.sparta.hanghaememo.controller;
 
-import com.sparta.hanghaememo.dto.BoardRequestDTO;
+import com.sparta.hanghaememo.dto.board.BoardRequestDTO;
 import com.sparta.hanghaememo.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,10 @@
 package com.sparta.hanghaememo.service;
 
-import com.sparta.hanghaememo.dto.BoardRequestDTO;
-import com.sparta.hanghaememo.dto.BoardResponseDto;
+import com.sparta.hanghaememo.dto.board.BoardRequestDTO;
+import com.sparta.hanghaememo.dto.board.BoardResponseDto;
 import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.Board;
+import com.sparta.hanghaememo.entity.StatusEnum;
 import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.entity.Users;
 import com.sparta.hanghaememo.repository.BoardRepository;
@@ -37,7 +38,7 @@ public class BoardService {
 
         board.addUser(users);
         boardRepository.save(board);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 작성 성공", boardRequestDTO);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 작성 성공", StatusEnum.OK,boardRequestDTO);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -47,7 +48,7 @@ public class BoardService {
         List<BoardResponseDto> boardList = boardRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(BoardResponseDto::new)
                 .collect(Collectors.toList());
-        ResponseDTO responseDTO =ResponseDTO.setSuccess("게시글 목록 조회 성공", boardList);
+        ResponseDTO responseDTO =ResponseDTO.setSuccess("게시글 목록 조회 성공", StatusEnum.OK, boardList);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -56,7 +57,7 @@ public class BoardService {
         // 게시글 존재여부 확인
         Board board = checkBoard(id);
         BoardResponseDto boardResponseDto = new BoardResponseDto(board);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 조회 성공",boardResponseDto);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 조회 성공", StatusEnum.OK,boardResponseDto);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -73,7 +74,7 @@ public class BoardService {
         isBoardUsers(users, board);
 
         board.update(boardRequestDTO);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 수정 성공",boardRequestDTO);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 수정 성공", StatusEnum.OK,boardRequestDTO);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -90,7 +91,7 @@ public class BoardService {
         isBoardUsers(users, board);
 
         boardRepository.deleteById(id);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 삭제 성공",null);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 삭제 성공", StatusEnum.OK,null);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 

@@ -1,7 +1,7 @@
 package com.sparta.hanghaememo.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.sparta.hanghaememo.dto.BoardRequestDTO;
+import com.sparta.hanghaememo.dto.board.BoardRequestDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

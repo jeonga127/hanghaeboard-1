@@ -50,10 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-
         filterChain.doFilter(request, response);
-
     }
+
     // Request Header의 Authorization 필드의 Bearer Token을 가져오는 메서드
     private String parseBearerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

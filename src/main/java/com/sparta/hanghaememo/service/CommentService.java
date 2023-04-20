@@ -1,12 +1,9 @@
 package com.sparta.hanghaememo.service;
 
-import com.sparta.hanghaememo.dto.CommentRequestDto;
-import com.sparta.hanghaememo.dto.CommentResponseDTO;
+import com.sparta.hanghaememo.dto.comment.CommentRequestDto;
+import com.sparta.hanghaememo.dto.comment.CommentResponseDTO;
 import com.sparta.hanghaememo.dto.ResponseDTO;
-import com.sparta.hanghaememo.entity.Board;
-import com.sparta.hanghaememo.entity.Comment;
-import com.sparta.hanghaememo.entity.UserRoleEnum;
-import com.sparta.hanghaememo.entity.Users;
+import com.sparta.hanghaememo.entity.*;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.repository.CommentRepository;
 import com.sparta.hanghaememo.repository.UserRepository;
@@ -43,7 +40,7 @@ public class CommentService {
 
         commentRepository.save(comment);
         boardRepository.save(board);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 작성 성공", new CommentResponseDTO(comment));
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 작성 성공", StatusEnum.OK, new CommentResponseDTO(comment));
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -56,7 +53,7 @@ public class CommentService {
         // 작성자 게시글 체크
         isCommentUsers(users,comment);
         comment.update(requestDto);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 수정 성공", new CommentResponseDTO(comment));
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 수정 성공", StatusEnum.OK, new CommentResponseDTO(comment));
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -71,7 +68,7 @@ public class CommentService {
         isCommentUsers(users,comment);
 
         commentRepository.deleteById(id);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 삭제 성공", null);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 삭제 성공", StatusEnum.OK, null);
         return new ResponseEntity(responseDTO , HttpStatus.OK);
     }
 

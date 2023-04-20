@@ -1,8 +1,9 @@
 package com.sparta.hanghaememo.service;
 
-import com.sparta.hanghaememo.dto.LoginRequestDto;
+import com.sparta.hanghaememo.dto.user.LoginRequestDto;
 import com.sparta.hanghaememo.dto.ResponseDTO;
-import com.sparta.hanghaememo.dto.SignupRequestDto;
+import com.sparta.hanghaememo.dto.user.SignupRequestDto;
+import com.sparta.hanghaememo.entity.StatusEnum;
 import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.entity.Users;
 import com.sparta.hanghaememo.repository.UserRepository;
@@ -32,7 +33,7 @@ public class UserService {
         // 회원 중복 확인
         Optional<Users> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
-            return new ResponseEntity("중복된 username 입니다 ", HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ResponseDTO.setFail("중복된 username 입니다", StatusEnum.BAD_REQUEST), HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST);
         }
 
         // 사용자 role 확인
@@ -46,7 +47,7 @@ public class UserService {
 
         Users user = new Users(username, password, role);
         userRepository.save(user);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("회원가입 성공",null);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("회원가입 성공", StatusEnum.OK,null);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -60,10 +61,10 @@ public class UserService {
 
         // 비밀번호 확인
         if(!passwordCheck(password, user))
-            return new ResponseEntity("회원을 찾을 수 없습니다.", HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ResponseDTO.setFail("회원을 찾을 수 없습니다.",StatusEnum.BAD_REQUEST), HttpStatus.BAD_REQUEST);
 
         response.addHeader(tokenProvider.AUTHORIZATION_HEADER, tokenProvider.create(user.getUsername(),user.getRole()));
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("로그인 성공",  user);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("로그인 성공", StatusEnum.OK,  user);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 

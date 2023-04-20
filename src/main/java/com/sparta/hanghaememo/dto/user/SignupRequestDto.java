@@ -1,4 +1,4 @@
-package com.sparta.hanghaememo.dto;
+package com.sparta.hanghaememo.dto.user;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

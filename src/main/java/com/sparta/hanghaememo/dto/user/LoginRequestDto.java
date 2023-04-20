@@ -1,4 +1,4 @@
-package com.sparta.hanghaememo.dto;
+package com.sparta.hanghaememo.dto.user;
 
 import lombok.Getter;
 import lombok.Setter;

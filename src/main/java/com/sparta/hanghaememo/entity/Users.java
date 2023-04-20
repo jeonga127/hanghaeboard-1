@@ -1,7 +1,7 @@
 package com.sparta.hanghaememo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sparta.hanghaememo.dto.SignupRequestDto;
+import com.sparta.hanghaememo.dto.user.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

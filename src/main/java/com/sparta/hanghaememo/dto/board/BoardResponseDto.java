@@ -1,4 +1,4 @@
-package com.sparta.hanghaememo.dto;
+package com.sparta.hanghaememo.dto.board;
 
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.entity.Comment;

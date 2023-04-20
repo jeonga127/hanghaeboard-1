@@ -1,7 +1,7 @@
 package com.sparta.hanghaememo.controller;
 
-import com.sparta.hanghaememo.dto.LoginRequestDto;
-import com.sparta.hanghaememo.dto.SignupRequestDto;
+import com.sparta.hanghaememo.dto.user.LoginRequestDto;
+import com.sparta.hanghaememo.dto.user.SignupRequestDto;
 import com.sparta.hanghaememo.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
