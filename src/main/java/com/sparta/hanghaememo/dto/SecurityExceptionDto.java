@@ -1,4 +1,4 @@
-package com.sparta.hanghaememo.security;
+package com.sparta.hanghaememo.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
