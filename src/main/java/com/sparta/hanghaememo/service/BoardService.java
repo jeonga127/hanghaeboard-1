@@ -117,7 +117,7 @@ public class BoardService {
 
     // 토큰 사용자 정보 가져오기
     private String usernameToken(HttpServletRequest request){
-        String token = tokenProvider.resolveToken(request);
-        return tokenProvider.validate(token);
+        String token = jwtUtil.resolveToken(request);
+        return jwtUtil.getUserInfoFromToken(token).getSubject();
     }
 }

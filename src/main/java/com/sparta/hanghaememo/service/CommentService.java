@@ -23,7 +23,8 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-    private final TokenProvider tokenProvider;
+    private final JwtUtil jwtUtil;
+
 
     @Transactional
     public ResponseEntity createComment(CommentRequestDto requestDto, HttpServletRequest request){

@@ -1,7 +1,7 @@
 package com.sparta.hanghaememo.service;
 
-import com.sparta.hanghaememo.dto.user.LoginRequestDto;
 import com.sparta.hanghaememo.dto.ResponseDTO;
+import com.sparta.hanghaememo.dto.user.LoginRequestDto;
 import com.sparta.hanghaememo.dto.user.SignupRequestDto;
 import com.sparta.hanghaememo.entity.StatusEnum;
 import com.sparta.hanghaememo.entity.UserRoleEnum;
@@ -30,7 +30,7 @@ public class UserService {
     @Transactional
     public ResponseEntity signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
-        String password = signupRequestDto.getPassword();
+        String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
         // 회원 중복 확인
         Optional<Users> found = userRepository.findByUsername(username);
@@ -49,7 +49,7 @@ public class UserService {
 
         Users user = new Users(username, password, role);
         userRepository.save(user);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("회원가입 성공", StatusEnum.OK,null);
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("회원가입 성공", StatusEnum.OK, null);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -70,15 +70,9 @@ public class UserService {
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
-    private Users userCheck(String username){
+    private Users userCheck(String username) {
         return userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
         );
-    }
-
-    private boolean passwordCheck(String password, Users users){
-        if(users.getPassword().equals(password))
-            return true;
-        return false;
     }
 }
