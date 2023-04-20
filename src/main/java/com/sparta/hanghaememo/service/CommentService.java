@@ -4,10 +4,10 @@ import com.sparta.hanghaememo.dto.comment.CommentRequestDto;
 import com.sparta.hanghaememo.dto.comment.CommentResponseDTO;
 import com.sparta.hanghaememo.dto.ResponseDTO;
 import com.sparta.hanghaememo.entity.*;
+import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.repository.CommentRepository;
 import com.sparta.hanghaememo.repository.UserRepository;
-import com.sparta.hanghaememo.security.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -99,8 +99,8 @@ public class CommentService {
     }
 
     private String usernameToken(HttpServletRequest request){
-        String token = tokenProvider.resolveToken(request);
-        return tokenProvider.validate(token);
+        String token = jwtUtil.resolveToken(request);
+        return jwtUtil.getUserInfoFromToken(token).getSubject();
     }
 
 }

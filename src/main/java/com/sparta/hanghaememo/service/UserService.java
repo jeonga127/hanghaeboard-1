@@ -6,13 +6,14 @@ import com.sparta.hanghaememo.dto.user.SignupRequestDto;
 import com.sparta.hanghaememo.entity.StatusEnum;
 import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.entity.Users;
+import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.UserRepository;
-import com.sparta.hanghaememo.security.TokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final TokenProvider tokenProvider;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
@@ -60,11 +62,11 @@ public class UserService {
         Users user = userCheck(username);
 
         // 비밀번호 확인
-        if(!passwordCheck(password, user))
-            return new ResponseEntity(ResponseDTO.setFail("회원을 찾을 수 없습니다.",StatusEnum.BAD_REQUEST), HttpStatus.BAD_REQUEST);
-
-        response.addHeader(tokenProvider.AUTHORIZATION_HEADER, tokenProvider.create(user.getUsername(),user.getRole()));
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("로그인 성공", StatusEnum.OK,  user);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return new ResponseEntity(ResponseDTO.setFail("회원을 찾을 수 없습니다.", StatusEnum.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        }
+        response.addHeader(jwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
+        ResponseDTO responseDTO = ResponseDTO.setSuccess("로그인 성공", StatusEnum.OK, user);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 

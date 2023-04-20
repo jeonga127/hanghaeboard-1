@@ -7,9 +7,9 @@ import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.entity.StatusEnum;
 import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.entity.Users;
+import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.repository.UserRepository;
-import com.sparta.hanghaememo.security.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final TokenProvider tokenProvider;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public ResponseEntity write(BoardRequestDTO boardRequestDTO , HttpServletRequest request){
