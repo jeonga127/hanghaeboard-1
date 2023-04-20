@@ -1,7 +1,7 @@
-package com.sparta.hanghaememo.security;
+package com.sparta.hanghaememo.security.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
+import com.sparta.hanghaememo.dto.SecurityExceptionDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;

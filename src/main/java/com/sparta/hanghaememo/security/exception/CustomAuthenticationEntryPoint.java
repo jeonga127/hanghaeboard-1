@@ -1,6 +1,7 @@
-package com.sparta.hanghaememo.security;
+package com.sparta.hanghaememo.security.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.hanghaememo.dto.SecurityExceptionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
