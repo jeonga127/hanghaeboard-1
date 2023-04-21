@@ -6,6 +6,7 @@ import com.sparta.hanghaememo.dto.ResponseDto;
 import com.sparta.hanghaememo.entity.*;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.security.CustomException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

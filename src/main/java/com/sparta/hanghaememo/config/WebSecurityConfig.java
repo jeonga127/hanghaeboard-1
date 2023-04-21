@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
-    private final JwtUtil jwtUtil;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean // 비밀번호 암호화 기능 등록
     public PasswordEncoder passwordEncoder() {
@@ -56,7 +56,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests().requestMatchers("/api/user/**","/api/read/**").permitAll()
                 // 나머지 Request에 대해서는 모두 인증된 사용자만 사용가능하게 함
                 .anyRequest().authenticated()
-                .and().addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .and().addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         httpSecurity.exceptionHandling().accessDeniedPage("/api/user/forbidden");

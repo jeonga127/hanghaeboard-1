@@ -2,6 +2,10 @@ package com.sparta.hanghaememo.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.hanghaememo.dto.exception.ErrorResponseDto;
+import com.sparta.hanghaememo.entity.Token;
+import com.sparta.hanghaememo.entity.Users;
+import com.sparta.hanghaememo.repository.TokenRepository;
+import com.sparta.hanghaememo.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,23 +27,39 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    // request가 들어왔을 때 Request Header의 Authorization 필드의 Bearer Token을 가져옴
-    // 가져온 토큰을 검증하고 검증 결과를 SecurityContext에 추가
 
     private final JwtUtil jwtUtil;
+    private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String accesstoken = jwtUtil.resolveToken(request, jwtUtil.ACCESS_HEADER);
 
-        String token = jwtUtil.resolveToken(request);
-
-        if(token != null) {
-            if(!jwtUtil.validateToken(token)){
-                jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.name(), HttpStatus.UNAUTHORIZED.value());
-                return;
+        if(accesstoken != null) {
+            if(jwtUtil.validateToken(accesstoken)) {
+                String username = jwtUtil.getUserInfoFromToken(accesstoken);
+                log.info("access키 유효함");
+                setAuthentication(username);
             }
-            Claims info = jwtUtil.getUserInfoFromToken(token);
-            setAuthentication(info.getSubject());
+            else if (tokenRepository.existsByAccessToken(request.getHeader("ACCESS_HEADER"))) {
+                Token refreshtoken = tokenRepository.findByAccessToken(request.getHeader("ACCESS_HEADER"));
+                
+                if(!jwtUtil.validateToken(refreshtoken.getRefreshToken().substring(7))){
+                    log.info("access 키도 refresh 키도 모두 유효하지 않음 : 인증 불가");
+                    jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.name(), HttpStatus.UNAUTHORIZED.value());
+                } else{
+                    log.info("access 키 유효하지 않지만 refresh 토큰 살아있음 : access키 재발급");
+                    Users user = userRepository.findByUsername(refreshtoken.getUsername()).get();
+                    String newAccessToken = jwtUtil.createToken(user.getUsername(), user.getRole(), "ACCESS_HEADER");
+                    response.addHeader(JwtUtil.ACCESS_HEADER, newAccessToken);
+                    refreshtoken.update(new Token(user.getUsername(),newAccessToken,refreshtoken.getRefreshToken()));
+                    tokenRepository.saveAndFlush(refreshtoken);
+                    setAuthentication(user.getUsername());
+                }
+            }
+            else
+                log.info("access키 유효하지 않음 & tokenrepository에 없음");
         }
         filterChain.doFilter(request,response);
     }

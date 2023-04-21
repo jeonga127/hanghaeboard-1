@@ -4,9 +4,11 @@ import com.sparta.hanghaememo.dto.ResponseDto;
 import com.sparta.hanghaememo.dto.user.LoginRequestDto;
 import com.sparta.hanghaememo.dto.user.SignupRequestDto;
 import com.sparta.hanghaememo.entity.ErrorCode;
+import com.sparta.hanghaememo.entity.Token;
 import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.entity.Users;
 import com.sparta.hanghaememo.jwt.JwtUtil;
+import com.sparta.hanghaememo.repository.TokenRepository;
 import com.sparta.hanghaememo.repository.UserRepository;
 import com.sparta.hanghaememo.security.CustomException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
@@ -66,7 +69,16 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.NON_LOGIN);
         }
-        response.addHeader(jwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
+
+        String refreshtoken = jwtUtil.createToken(user.getUsername(), user.getRole(),"REFRESH_HEADER");
+        String accesstoken = jwtUtil.createToken(user.getUsername(), user.getRole(), "ACCESS_HEADER");
+
+        if(tokenRepository.existsByUsername(username)){
+            Token token = tokenRepository.findByUsername(username);
+            token.update(new Token(username, accesstoken, refreshtoken ));
+        } else tokenRepository.save(new Token(username, accesstoken, refreshtoken));
+
+        response.addHeader(jwtUtil.ACCESS_HEADER, accesstoken);
         ResponseDto responseDTO = ResponseDto.setSuccess("로그인 성공", user);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
@@ -76,4 +88,5 @@ public class UserService {
                 () -> new CustomException(ErrorCode.NON_LOGIN)
         );
     }
+
 }
