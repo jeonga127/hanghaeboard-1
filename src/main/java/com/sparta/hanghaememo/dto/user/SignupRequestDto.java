@@ -14,7 +14,7 @@ public class SignupRequestDto {
     private String username;
 
     @Size(min = 8, max = 15)
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z0-9]*$" , message = "비밀번호 형식이 맞지않음")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]*$" , message = "비밀번호 형식이 맞지않음")
     private String password;
     private boolean admin = false;
     private String adminToken = "";

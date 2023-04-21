@@ -6,17 +6,17 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor(staticName = "add")
-public class ResponseDTO<D> {
+public class ResponseDTO<T> {
     private String message;
     private StatusEnum status;
-    private Object data;
+    private T data;
 
 
-    public static <D> ResponseDTO<D> setSuccess(String message, StatusEnum status, D data){
+    public static <T> ResponseDTO<T> setSuccess(String message, StatusEnum status, T data){
         return ResponseDTO.add(message, status, data);
     }
 
-    public static <D> ResponseDTO<D> setFail(String message, StatusEnum status){
+    public static <T> ResponseDTO<T> setFail(String message, StatusEnum status){
         return ResponseDTO.add( message, status, null);
     }
 }

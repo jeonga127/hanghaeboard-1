@@ -1,10 +1,12 @@
 package com.sparta.hanghaememo.controller;
 
 import com.sparta.hanghaememo.dto.board.BoardRequestDTO;
+import com.sparta.hanghaememo.security.UserDetailsImpl;
 import com.sparta.hanghaememo.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,27 +16,22 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/api/boards")
-    public ResponseEntity write(@RequestBody BoardRequestDTO board, HttpServletRequest request){
-        return boardService.write(board, request);
+    public ResponseEntity write(@RequestBody BoardRequestDTO board,
+                                @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return boardService.write(board, userDetails.getUser());
     }
 
-    @GetMapping("/api/boards")
-    public ResponseEntity list(){
-        return boardService.list();
-    }
-
-    @GetMapping("/api/boards/{id}")
-    public ResponseEntity listOne(@PathVariable Long id){
-        return boardService.listOne(id);
-    }
 
     @PutMapping("/api/boards/{id}")
-    public ResponseEntity updateMemo(@PathVariable Long id, @RequestBody BoardRequestDTO boardDTO, HttpServletRequest request) {
-        return boardService.update(id, boardDTO ,request);
+    public ResponseEntity updateMemo(@PathVariable Long id,
+                                     @RequestBody BoardRequestDTO boardDTO,
+                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.update(id, boardDTO, userDetails.getUser());
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public ResponseEntity delete(@PathVariable Long id, HttpServletRequest request) {
-        return boardService.delete(id, request);
+    public ResponseEntity delete(@PathVariable Long id,
+                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.delete(id, userDetails.getUser());
     }
 }
