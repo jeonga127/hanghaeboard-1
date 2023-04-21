@@ -1,7 +1,7 @@
 package com.sparta.hanghaememo.security.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.hanghaememo.dto.SecurityExceptionDto;
+import com.sparta.hanghaememo.dto.exception.ErrorResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -15,8 +15,8 @@ import java.io.OutputStream;
 
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
-    private static final SecurityExceptionDto exceptionDto =
-            new SecurityExceptionDto(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
+    private static final ErrorResponseDto exceptionDto =
+            new ErrorResponseDto(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.name(), HttpStatus.FORBIDDEN.getReasonPhrase());
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,

@@ -1,9 +1,8 @@
 package com.sparta.hanghaememo.controller;
 
-import com.sparta.hanghaememo.dto.board.BoardRequestDTO;
+import com.sparta.hanghaememo.dto.board.BoardRequestDto;
 import com.sparta.hanghaememo.security.UserDetailsImpl;
 import com.sparta.hanghaememo.service.BoardService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +15,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/api/boards")
-    public ResponseEntity write(@RequestBody BoardRequestDTO board,
+    public ResponseEntity write(@RequestBody BoardRequestDto board,
                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
         return boardService.write(board, userDetails.getUser());
     }
@@ -24,7 +23,7 @@ public class BoardController {
 
     @PutMapping("/api/boards/{id}")
     public ResponseEntity updateMemo(@PathVariable Long id,
-                                     @RequestBody BoardRequestDTO boardDTO,
+                                     @RequestBody BoardRequestDto boardDTO,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.update(id, boardDTO, userDetails.getUser());
     }

@@ -1,7 +1,7 @@
 package com.sparta.hanghaememo.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.sparta.hanghaememo.dto.board.BoardRequestDTO;
+import com.sparta.hanghaememo.dto.board.BoardRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,12 +38,12 @@ public class Board extends Timestamped{
         this.user = user;
     }
 
-    public Board(BoardRequestDTO boardDTO){
+    public Board(BoardRequestDto boardDTO){
         this.title = boardDTO.getTitle();
         this.contents = boardDTO.getContents();
     }
 
-    public void update(BoardRequestDTO boardDTO) {
+    public void update(BoardRequestDto boardDTO) {
         this.title = boardDTO.getTitle();
         this.contents = boardDTO.getContents();
     }

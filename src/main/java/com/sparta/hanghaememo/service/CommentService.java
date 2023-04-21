@@ -1,13 +1,12 @@
 package com.sparta.hanghaememo.service;
 
-import com.sparta.hanghaememo.dto.ResponseDTO;
+import com.sparta.hanghaememo.dto.ResponseDto;
 import com.sparta.hanghaememo.dto.comment.CommentRequestDto;
-import com.sparta.hanghaememo.dto.comment.CommentResponseDTO;
+import com.sparta.hanghaememo.dto.comment.CommentResponseDto;
 import com.sparta.hanghaememo.entity.*;
-import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.repository.CommentRepository;
-import com.sparta.hanghaememo.repository.UserRepository;
+import com.sparta.hanghaememo.security.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class CommentService {
 
         commentRepository.save(comment);
         boardRepository.save(board);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 작성 성공", StatusEnum.OK, new CommentResponseDTO(comment));
+        ResponseDto responseDTO = ResponseDto.setSuccess("댓글 작성 성공", new CommentResponseDto(comment));
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -44,7 +43,7 @@ public class CommentService {
         // 작성자 게시글 체크
         isCommentUsers(user,comment);
         comment.update(requestDto);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 수정 성공", StatusEnum.OK, new CommentResponseDTO(comment));
+        ResponseDto responseDTO = ResponseDto.setSuccess("댓글 수정 성공", new CommentResponseDto(comment));
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -55,27 +54,27 @@ public class CommentService {
         isCommentUsers(user,comment);
 
         commentRepository.deleteById(id);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("댓글 삭제 성공", StatusEnum.OK, null);
+        ResponseDto responseDTO = ResponseDto.setSuccess("댓글 삭제 성공", null);
         return new ResponseEntity(responseDTO , HttpStatus.OK);
     }
 
     private Board checkBoard(Long id){
         Board board = boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+                () -> new CustomException(ErrorCode.NO_BOARD)
         );
         return board;
     }
 
     private Comment checkComment(Long id){
         Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
+                () -> new CustomException(ErrorCode.NO_COMMENT)
         );
         return comment;
     }
 
     private void isCommentUsers(Users users, Comment comment) {
         if (!comment.getUser().getUsername().equals(users.getUsername()) && !users.getRole().equals(UserRoleEnum.ADMIN)) {
-            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
+            throw new CustomException(ErrorCode.NON_AUTHORIZATION);
         }
     }
 }

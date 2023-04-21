@@ -1,7 +1,7 @@
 package com.sparta.hanghaememo.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.hanghaememo.dto.SecurityExceptionDto;
+import com.sparta.hanghaememo.dto.exception.ErrorResponseDto;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 
 import java.io.IOException;
 
@@ -34,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(token != null) {
             if(!jwtUtil.validateToken(token)){
-                jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
+                jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.name(), HttpStatus.UNAUTHORIZED.value());
                 return;
             }
             Claims info = jwtUtil.getUserInfoFromToken(token);
@@ -51,11 +52,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(context);
     }
 
-    public void jwtExceptionHandler(HttpServletResponse response, String msg, int statusCode) {
+    public void jwtExceptionHandler(HttpServletResponse response, String error, String msg, int statusCode) {
         response.setStatus(statusCode);
         response.setContentType("application/json");
         try {
-            String json = new ObjectMapper().writeValueAsString(new SecurityExceptionDto(statusCode, msg));
+            String json = new ObjectMapper().writeValueAsString(new ErrorResponseDto(statusCode, error, msg));
             response.getWriter().write(json);
         } catch (Exception e) {
             log.error(e.getMessage());

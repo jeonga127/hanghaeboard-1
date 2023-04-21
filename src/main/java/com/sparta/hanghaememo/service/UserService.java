@@ -1,13 +1,14 @@
 package com.sparta.hanghaememo.service;
 
-import com.sparta.hanghaememo.dto.ResponseDTO;
+import com.sparta.hanghaememo.dto.ResponseDto;
 import com.sparta.hanghaememo.dto.user.LoginRequestDto;
 import com.sparta.hanghaememo.dto.user.SignupRequestDto;
-import com.sparta.hanghaememo.entity.StatusEnum;
+import com.sparta.hanghaememo.entity.ErrorCode;
 import com.sparta.hanghaememo.entity.UserRoleEnum;
 import com.sparta.hanghaememo.entity.Users;
 import com.sparta.hanghaememo.jwt.JwtUtil;
 import com.sparta.hanghaememo.repository.UserRepository;
+import com.sparta.hanghaememo.security.CustomException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +36,7 @@ public class UserService {
         // 회원 중복 확인
         Optional<Users> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
-            return new ResponseEntity(ResponseDTO.setFail("중복된 username 입니다", StatusEnum.BAD_REQUEST), HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ResponseDto.setFail("중복된 username 입니다"), HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST);
         }
 
         // 사용자 role 확인
@@ -49,12 +50,12 @@ public class UserService {
 
         Users user = new Users(username, password, role);
         userRepository.save(user);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("회원가입 성공", StatusEnum.OK, null);
+        ResponseDto responseDTO = ResponseDto.setSuccess("회원가입 성공", null);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity login(LoginRequestDto loginRequestDto, HttpServletResponse response) throws Exception{
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
@@ -63,16 +64,16 @@ public class UserService {
 
         // 비밀번호 확인
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            return new ResponseEntity(ResponseDTO.setFail("회원을 찾을 수 없습니다.", StatusEnum.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+            throw new CustomException(ErrorCode.NON_LOGIN);
         }
         response.addHeader(jwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("로그인 성공", StatusEnum.OK, user);
+        ResponseDto responseDTO = ResponseDto.setSuccess("로그인 성공", user);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
     private Users userCheck(String username) {
         return userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
+                () -> new CustomException(ErrorCode.NON_LOGIN)
         );
     }
 }

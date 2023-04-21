@@ -1,7 +1,7 @@
 package com.sparta.hanghaememo.security.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.hanghaememo.dto.SecurityExceptionDto;
+import com.sparta.hanghaememo.dto.exception.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -15,8 +15,8 @@ import java.io.OutputStream;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private static final SecurityExceptionDto exceptionDto =
-            new SecurityExceptionDto(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+    private static final ErrorResponseDto exceptionDto =
+            new ErrorResponseDto(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.name(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
 
     @Override
     public void commence(HttpServletRequest request,

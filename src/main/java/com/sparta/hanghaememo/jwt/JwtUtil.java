@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Date;
 
@@ -25,9 +27,12 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUtil {
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String ACCESS_HEADER = "ACCESS_HEADER";
+    public static final String REFRESH_HEADER = "REFRESH_HEADER";
+
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIME = 60 * 60 * 1000L;
+    private static final Date ACCESS_TIME = (Date)Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
+    private static final Date REFRESH_TIME = (Date)Date.from(Instant.now().plus(7, ChronoUnit.DAYS));
     private final UserDetailsServiceImpl userDetailsService;
 
     @Value("${jwt.secret.key}")
@@ -41,6 +46,24 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
+    // 토큰 생성
+    public String createToken(String username, UserRoleEnum role, String token) {
+        Date date = new Date();
+//        Date exprTime = token.equals("");
+
+        //토큰 앞은 Bearer이 붙음
+        //String 형식의 jwt토큰으로 반환됨
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .signWith(SignatureAlgorithm.HS512, SECURITY_KEY)
+                        .claim(ACCESS_HEADER, role) //auth 키에 사용자 권한 value 담기
+                        .setSubject(username) //subject라는 키에 username 넣음
+                        .setExpiration(ACCESS_TIME) //(현재시간 + 1시간)토큰 유효기간 지정
+                        .setIssuedAt(date) //언제 토큰이 생성 되었는가
+                        .signWith(key, signatureAlgorithm) //생성한 key 객체와 key객체를 어떤 알고리즘을 통해 암호화 할건지 지정
+                        .compact();
+    }
+
     // header 토큰을 가져오기
     public String resolveToken(HttpServletRequest request) {
         //Authorization 이라는 헤더 값(토큰)을 가져옴
@@ -51,23 +74,6 @@ public class JwtUtil {
             return bearerToken.substring(7);
         }
         return null;
-    }
-
-    // 토큰 생성
-    public String createToken(String username, UserRoleEnum role) {
-        Date date = new Date();
-
-        //토큰 앞은 Bearer이 붙음
-        //String 형식의 jwt토큰으로 반환됨
-        return BEARER_PREFIX +
-                Jwts.builder()
-                        .signWith(SignatureAlgorithm.HS512, SECURITY_KEY)
-                        .claim(AUTHORIZATION_HEADER, role) //auth 키에 사용자 권한 value 담기
-                        .setSubject(username) //subject라는 키에 username 넣음
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) //(현재시간 + 1시간)토큰 유효기간 지정
-                        .setIssuedAt(date) //언제 토큰이 생성 되었는가
-                        .signWith(key, signatureAlgorithm) //생성한 key 객체와 key객체를 어떤 알고리즘을 통해 암호화 할건지 지정
-                        .compact();
     }
 
     // 토큰 검증

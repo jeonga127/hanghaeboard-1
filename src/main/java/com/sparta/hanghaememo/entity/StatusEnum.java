@@ -1,5 +1,10 @@
 package com.sparta.hanghaememo.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum StatusEnum {
     OK(200, "OK"),
     BAD_REQUEST(400, "BAD_REQUEST"),
@@ -9,8 +14,4 @@ public enum StatusEnum {
     int statusCode;
     String code;
 
-    StatusEnum(int statusCode, String code) {
-        this.statusCode = statusCode;
-        this.code = code;
-    }
 }

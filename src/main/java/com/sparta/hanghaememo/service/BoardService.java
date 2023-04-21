@@ -1,16 +1,11 @@
 package com.sparta.hanghaememo.service;
 
-import com.sparta.hanghaememo.dto.board.BoardRequestDTO;
+import com.sparta.hanghaememo.dto.board.BoardRequestDto;
 import com.sparta.hanghaememo.dto.board.BoardResponseDto;
-import com.sparta.hanghaememo.dto.ResponseDTO;
-import com.sparta.hanghaememo.entity.Board;
-import com.sparta.hanghaememo.entity.StatusEnum;
-import com.sparta.hanghaememo.entity.UserRoleEnum;
-import com.sparta.hanghaememo.entity.Users;
-import com.sparta.hanghaememo.jwt.JwtUtil;
+import com.sparta.hanghaememo.dto.ResponseDto;
+import com.sparta.hanghaememo.entity.*;
 import com.sparta.hanghaememo.repository.BoardRepository;
-import com.sparta.hanghaememo.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
+import com.sparta.hanghaememo.security.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +19,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
 
     @Transactional
-    public ResponseEntity write(BoardRequestDTO boardRequestDTO , Users user){
+    public ResponseEntity write(BoardRequestDto boardRequestDTO , Users user){
         Board board = new Board(boardRequestDTO);
 
         board.addUser(user);
         boardRepository.save(board);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 작성 성공", StatusEnum.OK,boardRequestDTO);
+        ResponseDto responseDTO = ResponseDto.setSuccess("게시글 작성 성공", boardRequestDTO);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -43,7 +36,7 @@ public class BoardService {
         List<BoardResponseDto> boardList = boardRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(BoardResponseDto::new)
                 .collect(Collectors.toList());
-        ResponseDTO responseDTO =ResponseDTO.setSuccess("게시글 목록 조회 성공", StatusEnum.OK, boardList);
+        ResponseDto responseDTO = ResponseDto.setSuccess("게시글 목록 조회 성공", boardList);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -52,12 +45,12 @@ public class BoardService {
         // 게시글 존재여부 확인
         Board board = checkBoard(id);
         BoardResponseDto boardResponseDto = new BoardResponseDto(board);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 조회 성공", StatusEnum.OK,boardResponseDto);
+        ResponseDto responseDTO = ResponseDto.setSuccess("게시글 조회 성공", boardResponseDto);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity update(Long id, BoardRequestDTO boardRequestDTO, Users user) {
+    public ResponseEntity update(Long id, BoardRequestDto boardRequestDTO, Users user) {
         // 게시글 존재여부 확인
         Board board = checkBoard(id);
 
@@ -65,7 +58,7 @@ public class BoardService {
         isBoardUsers(user, board);
 
         board.update(boardRequestDTO);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 수정 성공", StatusEnum.OK,boardRequestDTO);
+        ResponseDto responseDTO = ResponseDto.setSuccess("게시글 수정 성공",boardRequestDTO);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
@@ -77,21 +70,21 @@ public class BoardService {
         isBoardUsers(user, board);
 
         boardRepository.deleteById(id);
-        ResponseDTO responseDTO = ResponseDTO.setSuccess("게시글 삭제 성공", StatusEnum.OK,null);
+        ResponseDto responseDTO = ResponseDto.setSuccess("게시글 삭제 성공",null);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
 
     private Board checkBoard(Long id){
         Board board = boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+                () -> new CustomException(ErrorCode.NO_BOARD)
         );
         return board;
     }
 
     private void isBoardUsers(Users users, Board board) {
         if (!board.getUser().getUsername().equals(users.getUsername()) && !users.getRole().equals(UserRoleEnum.ADMIN)) {
-            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
+            throw new CustomException(ErrorCode.NON_AUTHORIZATION);
         }
     }
 
