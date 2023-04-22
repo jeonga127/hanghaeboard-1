@@ -48,4 +48,8 @@ public class Board extends Timestamped{
     }
 
     public void addComment(List<Comment> commentList){ this.commentList = commentList; }
+
+    public void updatelikes(boolean addOrNot){
+        this.likes = addOrNot? this.likes+1 : this.likes-1;
+    }
 }

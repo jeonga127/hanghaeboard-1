@@ -4,6 +4,7 @@ import com.sparta.hanghaememo.dto.board.BoardRequestDto;
 import com.sparta.hanghaememo.dto.board.BoardResponseDto;
 import com.sparta.hanghaememo.dto.ResponseDto;
 import com.sparta.hanghaememo.entity.*;
+import com.sparta.hanghaememo.repository.BoardLikesRepository;
 import com.sparta.hanghaememo.repository.BoardRepository;
 import com.sparta.hanghaememo.security.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final BoardLikesRepository boardLikesRepository;
 
     @Transactional
     public ResponseEntity write(BoardRequestDto boardRequestDTO , Users user){
@@ -73,6 +75,28 @@ public class BoardService {
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity updateLikes(Long id, Users user) {
+        //게시글 존재여부 확인
+        Board board = checkBoard(id);
+        ResponseDto responseDTO = new ResponseDto();
+
+        // 게시글에 현재 유저의 좋아요 유무 확인
+        if(boardLikesRepository.existsByBoardIdAndUserId(board.getId(), user.getId())){
+            // 좋아요가 있으면 삭제
+            BoardLikes boardLikes = boardLikesRepository.findByBoardIdAndUserId(board.getId(), user.getId());
+            boardLikesRepository.delete(boardLikes);
+            board.updatelikes(false);
+            responseDTO.setMessage("Board 좋아요 감소");
+        }else{ // 없으면 좋아요 +1
+            boardLikesRepository.save(new BoardLikes(board, user));
+            board.updatelikes(true);
+            responseDTO.setMessage("Board 좋아요 증가");
+        }
+        responseDTO.setStatus(StatusEnum.OK);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
+    }
+
     private Board checkBoard(Long id){
         return boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.NO_BOARD)
@@ -84,5 +108,4 @@ public class BoardService {
             throw new CustomException(ErrorCode.NON_AUTHORIZATION);
         }
     }
-
 }

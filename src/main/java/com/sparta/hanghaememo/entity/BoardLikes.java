@@ -21,4 +21,9 @@ public class BoardLikes {
     @JoinColumn(name = "boardId", nullable = false)
     private Board board;
 
+    public BoardLikes(Board board, Users user){
+        this.board = board;
+        this.user = user;
+    }
+
 }

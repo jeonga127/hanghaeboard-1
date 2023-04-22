@@ -19,6 +19,7 @@ public class BoardResponseDto {
     private LocalDateTime modifiedAt;
     private Users user;
     private List<Comment> commentList;
+    private int likes;
 
     public BoardResponseDto(Board board) {
         this.id = board.getId();
@@ -28,5 +29,6 @@ public class BoardResponseDto {
         this.modifiedAt = board.getModifiedAt();
         this.commentList = board.getCommentList();
         this.user = board.getUser();
+        this.likes = board.getLikes();
     }
 }
