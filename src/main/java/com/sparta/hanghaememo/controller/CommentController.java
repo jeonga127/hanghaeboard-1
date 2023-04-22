@@ -3,7 +3,6 @@ package com.sparta.hanghaememo.controller;
 import com.sparta.hanghaememo.dto.comment.CommentRequestDto;
 import com.sparta.hanghaememo.security.UserDetailsImpl;
 import com.sparta.hanghaememo.service.CommentService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,6 +31,11 @@ public class CommentController {
     public ResponseEntity deleteComment(@PathVariable Long id,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails){
         return commentService.deleteComment(id, userDetails.getUser());
+    }
+
+    @PutMapping("/api/likes/comment/{id}")
+    public ResponseEntity updateLike(@PathVariable Long id){
+        return commentService.updateLike(id);
     }
 
 }

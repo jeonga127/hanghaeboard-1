@@ -33,4 +33,10 @@ public class BoardController {
                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.delete(id, userDetails.getUser());
     }
+
+    @PutMapping("/api/likes/board/{id}")
+    public ResponseEntity updateLike(@PathVariable Long id,
+                                     @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return boardService.updateLike(id, userDetails.getUser());
+    }
 }

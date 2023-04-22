@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             else if (tokenRepository.existsByAccessToken(request.getHeader("ACCESS_HEADER"))) {
                 Token refreshtoken = tokenRepository.findByAccessToken(request.getHeader("ACCESS_HEADER"));
-                
+
                 if(!jwtUtil.validateToken(refreshtoken.getRefreshToken().substring(7))){
                     log.info("access 키도 refresh 키도 모두 유효하지 않음 : 인증 불가");
                     jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.name(), HttpStatus.UNAUTHORIZED.value());
@@ -52,8 +52,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.info("access 키 유효하지 않지만 refresh 토큰 살아있음 : access키 재발급");
                     Users user = userRepository.findByUsername(refreshtoken.getUsername()).get();
                     String newAccessToken = jwtUtil.createToken(user.getUsername(), user.getRole(), "ACCESS_HEADER");
+                    String newRefreshToken = jwtUtil.createToken(user.getUsername(), user.getRole(), "REFRESH_HEADER");
                     response.addHeader(JwtUtil.ACCESS_HEADER, newAccessToken);
-                    refreshtoken.update(new Token(user.getUsername(),newAccessToken,refreshtoken.getRefreshToken()));
+                    refreshtoken.update(new Token(user.getUsername(),newAccessToken,newRefreshToken));
                     tokenRepository.saveAndFlush(refreshtoken);
                     setAuthentication(user.getUsername());
                 }

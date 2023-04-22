@@ -5,6 +5,7 @@ import com.sparta.hanghaememo.dto.board.BoardResponseDto;
 import com.sparta.hanghaememo.dto.ResponseDto;
 import com.sparta.hanghaememo.entity.*;
 import com.sparta.hanghaememo.repository.BoardRepository;
+import com.sparta.hanghaememo.repository.LikeRepository;
 import com.sparta.hanghaememo.security.CustomException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final LikeRepository likeRepository;
 
     @Transactional
     public ResponseEntity write(BoardRequestDto boardRequestDTO , Users user){
-        Board board = new Board(boardRequestDTO);
+        Board board = new Board(boardRequestDTO.getTitle(), boardRequestDTO.getContents(), user);
 
-        board.addUser(user);
         boardRepository.save(board);
         ResponseDto responseDTO = ResponseDto.setSuccess("게시글 작성 성공", boardRequestDTO);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
@@ -75,12 +76,32 @@ public class BoardService {
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity updateLike(Long id, Users user){
+        // 게시글 존재 여부 확인
+        Board board = checkBoard(id);
+        ResponseDto responseDTO = new ResponseDto();
+
+        // 해당 user의 해당 board에 대해 like 이력이 있음 -> 좋아요 취소
+        if(likeRepository.existsByUserIdAndBoardId(user.getId(), board.getId())) {
+            likeRepository.delete(likeRepository.findByUserIdAndBoardId(user.getId(), board.getId()));
+            board.updateLike(false);
+            responseDTO.setMessage("게시글 좋아요 감소");
+        } else {
+            likeRepository.save(new Likes(user, board));
+            board.updateLike(true);
+            responseDTO.setMessage("게시글 좋아요 증가");
+        }
+
+        responseDTO.setStatus(StatusEnum.OK);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
+    }
+
 
     private Board checkBoard(Long id){
-        Board board = boardRepository.findById(id).orElseThrow(
+        return boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.NO_BOARD)
         );
-        return board;
     }
 
     private void isBoardUsers(Users users, Board board) {

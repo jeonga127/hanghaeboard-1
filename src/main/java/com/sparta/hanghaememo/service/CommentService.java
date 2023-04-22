@@ -58,18 +58,26 @@ public class CommentService {
         return new ResponseEntity(responseDTO , HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity updateLike(Long id) {
+        Comment comment = checkComment(id);
+        //
+
+        //
+        ResponseDto responseDTO = ResponseDto.setSuccess("댓글 좋아요 수정", null);
+        return new ResponseEntity(responseDTO, HttpStatus.OK);
+    }
+
     private Board checkBoard(Long id){
-        Board board = boardRepository.findById(id).orElseThrow(
+        return boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.NO_BOARD)
         );
-        return board;
     }
 
     private Comment checkComment(Long id){
-        Comment comment = commentRepository.findById(id).orElseThrow(
+        return commentRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.NO_COMMENT)
         );
-        return comment;
     }
 
     private void isCommentUsers(Users users, Comment comment) {

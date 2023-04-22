@@ -32,15 +32,14 @@ public class Board extends Timestamped{
     @OrderBy("createdAt desc")
     private List<Comment> commentList;
 
+    @Column(nullable = false)
+    private int likesnum;
+
     public Board(String title, String contents, Users user) {
         this.title = title;
         this.contents = contents;
         this.user = user;
-    }
-
-    public Board(BoardRequestDto boardDTO){
-        this.title = boardDTO.getTitle();
-        this.contents = boardDTO.getContents();
+        this.likesnum = 0;
     }
 
     public void update(BoardRequestDto boardDTO) {
@@ -48,10 +47,9 @@ public class Board extends Timestamped{
         this.contents = boardDTO.getContents();
     }
 
-
-    public void addUser(Users user) {
-        this.user = user;
-    }
-
     public void addComment(List<Comment> commentList){ this.commentList = commentList; }
+
+    public void updateLike(boolean addOrNot){
+        this.likesnum = addOrNot ? this.likesnum+1 : this.likesnum-1;
+    }
 }
