@@ -58,16 +58,6 @@ public class CommentService {
         return new ResponseEntity(responseDTO , HttpStatus.OK);
     }
 
-    @Transactional
-    public ResponseEntity updateLike(Long id) {
-        Comment comment = checkComment(id);
-        //
-
-        //
-        ResponseDto responseDTO = ResponseDto.setSuccess("댓글 좋아요 수정", null);
-        return new ResponseEntity(responseDTO, HttpStatus.OK);
-    }
-
     private Board checkBoard(Long id){
         return boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.NO_BOARD)

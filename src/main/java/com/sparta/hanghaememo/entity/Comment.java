@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Comment extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column(name = "commentId")
     private Long id;
 
     @Column(nullable = false)
@@ -20,13 +20,12 @@ public class Comment extends Timestamped{
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "boardId", nullable = false)
     private Board board;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private Users user;
-
 
     public Comment(Users user, Board board, CommentRequestDto commentRequestDto){
         this.user = user;

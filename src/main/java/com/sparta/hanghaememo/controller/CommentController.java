@@ -32,10 +32,4 @@ public class CommentController {
                                         @AuthenticationPrincipal UserDetailsImpl userDetails){
         return commentService.deleteComment(id, userDetails.getUser());
     }
-
-    @PutMapping("/api/likes/comment/{id}")
-    public ResponseEntity updateLike(@PathVariable Long id){
-        return commentService.updateLike(id);
-    }
-
 }

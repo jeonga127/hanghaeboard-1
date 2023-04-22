@@ -14,7 +14,7 @@ import java.util.List;
 public class Board extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_id")
+    @Column(name = "boardId")
     private Long id;
 
     @Column(nullable = false)
@@ -24,7 +24,7 @@ public class Board extends Timestamped{
     private String contents;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private Users user;
 
     @JsonManagedReference
@@ -48,8 +48,4 @@ public class Board extends Timestamped{
     }
 
     public void addComment(List<Comment> commentList){ this.commentList = commentList; }
-
-    public void updateLike(boolean addOrNot){
-        this.likesnum = addOrNot ? this.likesnum+1 : this.likesnum-1;
-    }
 }
