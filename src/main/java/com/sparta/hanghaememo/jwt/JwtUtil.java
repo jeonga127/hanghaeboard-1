@@ -48,8 +48,8 @@ public class JwtUtil {
     // 토큰 생성
     public String createToken(String username, UserRoleEnum role, String token) {
         Date date = new Date();
-        Date ACCESS_TIME = (Date)Date.from(Instant.now().plus(30, ChronoUnit.SECONDS));
-        Date REFRESH_TIME = (Date)Date.from(Instant.now().plus(1, ChronoUnit.MINUTES));
+        Date ACCESS_TIME = (Date)Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
+        Date REFRESH_TIME = (Date)Date.from(Instant.now().plus(7, ChronoUnit.DAYS));
 
         String header = token.equals("ACCESS_HEADER")? ACCESS_HEADER : REFRESH_HEADER;
         Date exprTime = token.equals("ACCESS_HEADER")? ACCESS_TIME : REFRESH_TIME ;
