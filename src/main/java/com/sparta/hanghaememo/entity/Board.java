@@ -33,13 +33,13 @@ public class Board extends Timestamped{
     private List<Comment> commentList;
 
     @Column(nullable = false)
-    private int likesnum;
+    private int likes;
 
     public Board(String title, String contents, Users user) {
         this.title = title;
         this.contents = contents;
         this.user = user;
-        this.likesnum = 0;
+        this.likes = 0;
     }
 
     public void update(BoardRequestDto boardDTO) {
