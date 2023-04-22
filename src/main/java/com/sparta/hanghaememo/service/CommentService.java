@@ -24,6 +24,7 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity createComment(CommentRequestDto requestDto, Users user){
+        // 게시글 존재 여부 확인
         Board board = checkBoard(requestDto.getBoard_id());
         Comment comment = new Comment(user, board, requestDto);
 
@@ -39,6 +40,7 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity updateComment(Long id, CommentRequestDto requestDto, Users user) {
+        // 댓글 존재 여부 확인
         Comment comment = checkComment(id);
         // 작성자 게시글 체크
         isCommentUsers(user,comment);
